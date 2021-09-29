@@ -1,24 +1,32 @@
 import axios from 'axios';
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import './App.css';
+import { useSelector, useDispatch } from 'react-redux';
+import Button from '@mui/material/Button';
+
 
 function App() {
-  const [results, setResults] = useState([]);
+  
+  const dispatch = useDispatch();
 
   const fetchGiphyResults = () => {
     axios({
       method: 'GET',
-      URL: '/giphy'
+      url: '/random'
     }).then(response => {
-      console.log(response);
-      setResults(response.data.data);
+      console.log(response.data.data);
+      dispatch({
+        type: 'SET_RANDOM',
+        payload: response.data.data
+      })
     })
   }
 
-
-  useEffect(() => {
-    fetchGiphyResults();
+const random = useSelector(store => store.random);
+  
+useEffect(() => {
+    fetchGiphyResults(); 
   }, []);
 
   return (
@@ -26,8 +34,11 @@ function App() {
       <header className="App-header">
         <h1>Random Giphy API</h1>
       </header>
-      {JSON.stringify(results)}
-      <p>Results go here</p>
+         
+            {/* <p>{JSON.stringify(random.data)}</p> */}
+           <p><img src = {random.fixed_height_downsampled_url} /></p>
+           <Button variant="contained" onClick={fetchGiphyResults}>Get Another</Button>
+          
     </div>
   );
 }
